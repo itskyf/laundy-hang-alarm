@@ -1,0 +1,221 @@
+[
+    {
+        "id": "78926653.7e29d8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "24485b21.35bea4",
+        "type": "mqtt in",
+        "z": "78926653.7e29d8",
+        "name": "",
+        "topic": "/clothes/humidity",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "32d10010.de0b6",
+        "x": 300,
+        "y": 80,
+        "wires": [
+            [
+                "d95266c2.065c88"
+            ]
+        ]
+    },
+    {
+        "id": "d95266c2.065c88",
+        "type": "ui_gauge",
+        "z": "78926653.7e29d8",
+        "name": "",
+        "group": "62f6d022.61a7e",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 540,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "3b7f49c5.ab2826",
+        "type": "mqtt in",
+        "z": "78926653.7e29d8",
+        "name": "",
+        "topic": "/clothes/buzzer/playing",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "32d10010.de0b6",
+        "x": 180,
+        "y": 360,
+        "wires": [
+            [
+                "76192ea.710b6d"
+            ]
+        ]
+    },
+    {
+        "id": "76192ea.710b6d",
+        "type": "function",
+        "z": "78926653.7e29d8",
+        "name": "PlayingMsgToText",
+        "func": "var str = msg.payload;\nif (str == \"1\") {\n    msg.payload = \"YES\";\n}\nelse if (str == \"0\") {\n    msg.payload = \"NO\";\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 430,
+        "y": 360,
+        "wires": [
+            [
+                "65521dac.a72ec4"
+            ]
+        ]
+    },
+    {
+        "id": "65521dac.a72ec4",
+        "type": "ui_text",
+        "z": "78926653.7e29d8",
+        "group": "62f6d022.61a7e",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Buzzer playing",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 660,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "f8c73353.18064",
+        "type": "ui_switch",
+        "z": "78926653.7e29d8",
+        "name": "",
+        "label": "Buzzer on",
+        "tooltip": "",
+        "group": "62f6d022.61a7e",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "/clothes/buzzer/on",
+        "style": "",
+        "onvalue": "1",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "0",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 240,
+        "y": 180,
+        "wires": [
+            [
+                "16bb9138.87c9bf"
+            ]
+        ]
+    },
+    {
+        "id": "2496cf3e.f7db3",
+        "type": "mqtt out",
+        "z": "78926653.7e29d8",
+        "name": "",
+        "topic": "/clothes/buzzer/on",
+        "qos": "",
+        "retain": "",
+        "broker": "32d10010.de0b6",
+        "x": 650,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "16bb9138.87c9bf",
+        "type": "function",
+        "z": "78926653.7e29d8",
+        "name": "StoreAndInitOn",
+        "func": "var topic = msg.topic;\nvar str = msg.payload;\nif (topic == \"/clothes/buzzer/on\") {\n    context.set(\"on\", str);\n}\nelse if (topic == \"/clothes/buzzer/startup\") {\n    msg.payload = context.get(\"on\") || \"0\";\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "2496cf3e.f7db3"
+            ]
+        ]
+    },
+    {
+        "id": "b7661877.2cfaf8",
+        "type": "mqtt in",
+        "z": "78926653.7e29d8",
+        "name": "",
+        "topic": "/clothes/buzzer/startup",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "32d10010.de0b6",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "16bb9138.87c9bf"
+            ]
+        ]
+    },
+    {
+        "id": "32d10010.de0b6",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.mqtt-dashboard.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "62f6d022.61a7e",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "94f5e7e6.ddcd18",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "94f5e7e6.ddcd18",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
