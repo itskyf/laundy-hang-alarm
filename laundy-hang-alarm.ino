@@ -1,8 +1,10 @@
 #include <driver/rtc_io.h>
 #include <heltec.h>
 
-#include "Assests.hpp"
 #include "Config.hpp"
+#include "Fonts.hpp"
+#include "Logos.hpp"
+
 #include <AdafruitIO_WiFi.h>
 #include <Bounce2.h>
 #include <dhtnew.h>
@@ -33,28 +35,14 @@ void welcome() {
 }
 
 void onWifiConnected() {
-  Heltec.display->clear();
-  Heltec.display->setFont(Roboto_16);
-  Heltec.display->drawString(64, 18, WiFi.SSID());
-  Heltec.display->setFont(Roboto_Italic_12);
-  Heltec.display->drawString(64, 42, "Connected");
-  Heltec.display->display();
-
-  ioTicker.attach_ms(
-      500, +[]() {
-        if (io.status() >= AIO_CONNECTED) {
-          humidity = io.feed("humidity");
-          temperature = io.feed("temperature");
-
-          dhtTicker.attach(10, pollDHT);
-          ioTicker.attach(15, sendAdafruit);
-        }
-      });
+  dhtTicker.attach(5, updateHardware);
+  ioTicker.attach(15, sendAdafruit);
 }
 
 void networkSetup() {
   WiFi.mode(WIFI_STA);
   wm.setClass("invert");
+  wm.setConnectRetries(5);
   wm.setDebugOutput(false);
   wm.setConfigPortalBlocking(false);
   wm.setSaveConfigCallback(onWifiConnected);
@@ -72,15 +60,18 @@ void networkSetup() {
   }
 }
 
-void pollDHT() {
+void updateHardware() {
   if (dht.read() == DHTLIB_OK) {
     readHumidity = dht.getHumidity();
     readTemperature = dht.getTemperature();
+    // TODO battery
   }
+
+  // TODO OLED
 }
 
 void sendAdafruit() {
-  if (readTemperature && readHumidity) {
+  if (io.status() >= AIO_CONNECTED && readTemperature && readHumidity) {
     temperature->save(readTemperature);
     humidity->save(readHumidity);
   }
@@ -106,7 +97,8 @@ void setup() {
   btn.setPressedState(LOW);
 
   readHumidity = readTemperature = 0;
-  humidity = temperature = nullptr;
+  humidity = io.feed("humidity");
+  temperature = io.feed("temperature");
 
   networkSetup();
 }

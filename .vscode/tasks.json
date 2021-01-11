@@ -1,0 +1,43 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build sketch",
+            "type": "shell",
+            "command": "arduino-cli",
+            "args": [
+                "compile",
+                "--fqbn",
+                "Heltec-esp32:esp32:wifi_kit_32"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Upload sketch",
+            "type": "shell",
+            "command": "arduino-cli",
+            "args": [
+                "upload",
+                "-p",
+                "COM3",
+                "--fqbn",
+                "Heltec-esp32:esp32:wifi_kit_32"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
