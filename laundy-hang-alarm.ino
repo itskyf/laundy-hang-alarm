@@ -28,10 +28,31 @@ WiFiManager wm;
 
 void welcome() {
   Heltec.display->clear();
-  Heltec.display->setFont(Roboto_16);
+  Heltec.display->setFont(font::DejaVu_Sans_14);
   Heltec.display->drawString(64, 32, "Welcome");
   Heltec.display->display();
   delay(500);
+}
+
+void updateOLED() {
+  Heltec.display->clear();
+
+  Heltec.display->drawXbm(5, 10, logo::AdafuitW, logo::LogoH, logo::Adafuit);
+  Heltec.display->drawXbm(35, 10, logo::WifiW, logo::LogoH, logo::WifiWeak);
+  Heltec.display->drawXbm(93, 10, logo::BatteryW, logo::LogoH, logo::Battery);
+  Heltec.display->drawString(108, 13, "50");
+
+  String h_t = String(readHumidity);
+  h_t += "%   ";
+  h_t += String(readTemperature);
+  h_t += "°C";
+
+  Heltec.display->setFont(font::DejaVu_Sans_14);
+  Heltec.display->drawString(64, 34, h_t.c_str());
+  Heltec.display->setFont(font::DejaVu_Sans_10);
+  Heltec.display->drawString(64, 52, "192.168.1.129");
+
+  Heltec.display->display();
 }
 
 void onWifiConnected() {
@@ -51,9 +72,9 @@ void networkSetup() {
     onWifiConnected();
   } else {
     Heltec.display->clear();
-    Heltec.display->setFont(Roboto_16);
+    Heltec.display->setFont(font::DejaVu_Sans_14);
     Heltec.display->drawString(64, 30, "SSID: " + wm.getConfigPortalSSID());
-    Heltec.display->setFont(Roboto_Italic_12);
+    Heltec.display->setFont(font::DejaVu_Sans_10);
     Heltec.display->drawString(64, 12, "AP mode");
     Heltec.display->drawString(64, 52, WiFi.softAPIP().toString());
     Heltec.display->display();
@@ -68,6 +89,7 @@ void updateHardware() {
   }
 
   // TODO OLED
+  updateOLED();
 }
 
 void sendAdafruit() {
@@ -79,7 +101,7 @@ void sendAdafruit() {
 
 void goodBye() {
   Heltec.display->clear();
-  Heltec.display->setFont(Roboto_16);
+  Heltec.display->setFont(font::DejaVu_Sans_14);
   Heltec.display->drawString(64, 32, "Good bye");
   Heltec.display->display();
   delay(500);
